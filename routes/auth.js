@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-const registerUser = require('../models/RegisterUser');
+const User = require('../models/User');
 const { registerValidator, loginValidator } = require('../validation');
 
 // Register
 router.post('/register', async (req, res) => {
-    console.log('Register API');
+    // console.log('Register API');
 
     //Validate req data
     //Extract error object from the validation object
@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
     };
 
     //Check if the email already exists
-    const dbUser = await registerUser.findOne({email: req.body.email});
+    const dbUser = await User.findOne({email: req.body.email});
     if(dbUser) {
         console.error('Email is already in use!');
         return res.status(400).send({message: 'Email is already in use!'});
@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
     const hashed = await bcrypt.hash(req.body.password, salt);
 
     //If valid data & No existing user with email, create New User in DB
-    const newUser = new registerUser({
+    const newUser = new User({
         name: req.body.name,
         email: req.body.email,
         password: hashed
@@ -46,7 +46,7 @@ router.post('/register', async (req, res) => {
 ///////////////////////Register END//////////////////////////////////////////////
 //Login
 router.post('/login', async (req, res) => {
-    console.log('Login API');
+    // console.log('Login API');
 
     // Validate data before login
     const {error} = loginValidator(req.body);
@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
     };
 
     // Check if user is in the DB
-    const dbUser = await registerUser.findOne({email: req.body.email});
+    const dbUser = await User.findOne({email: req.body.email});
     if(!dbUser) {
         console.error('Email not found!');
         return res.status(400).send({message: 'Email not found!'});
