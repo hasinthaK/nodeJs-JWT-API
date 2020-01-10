@@ -9,7 +9,7 @@ const cors = require('cors');
 //App middlewares
 app.use(express.json());
 app.use(cors());
-dotenv.config({path: __nodeJWT + '/.env'});
+dotenv.config({path: `${__dirname}/.env`});
 
 // DB connect
 try{
