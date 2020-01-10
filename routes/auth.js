@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const loginUser = require('../models/LoginUser');
 const bcrypt = require('bcryptjs');
 const registerUser = require('../models/RegisterUser');
 const { registerValidator, loginValidator } = require('../validation');
@@ -14,14 +13,14 @@ router.post('/register', async (req, res) => {
     const {error} = registerValidator(req.body);
     if(error) {
         console.log(error.details[0].message);
-        return res.status(400).send(error.details[0].message);
+        return res.status(400).send({message: error.details[0].message});
     };
 
     //Check if the email already exists
     const dbUser = await registerUser.findOne({email: req.body.email});
     if(dbUser) {
         console.error('Email is already in use!');
-        return res.status(400).send('Email is already in use!');
+        return res.status(400).send({message: 'Email is already in use!'});
     }
 
     //Password hashing
@@ -46,15 +45,32 @@ router.post('/register', async (req, res) => {
 });
 ///////////////////////Register END//////////////////////////////////////////////
 //Login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     console.log('Login API');
 
+    // Validate data before login
     const {error} = loginValidator(req.body);
     if(error) {
         console.log(error.details[0].message);
-        return res.status(400).send(error.details[0].message);
+        return res.status(400).send({message: error.details[0].message});
     };
 
+    // Check if user is in the DB
+    const dbUser = await registerUser.findOne({email: req.body.email});
+    if(!dbUser) {
+        console.error('Email not found!');
+        return res.status(400).send({message: 'Email not found!'});
+    }
+
+    // Check pass
+    const validPass = await bcrypt.compare(req.body.password, dbUser.password);
+    if(!validPass) {
+        console.error('Password is incorrect!');
+       return res.status(400).send({message: 'Password is incorrect!'});
+    }
+
+    //If password is valid Login!
+    res.send({message: 'Logged in!'});
 
 });
 ///////////////////////////Login END///////////////////////////////////////////////
