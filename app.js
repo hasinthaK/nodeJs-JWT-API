@@ -13,7 +13,7 @@ dotenv.config();
 
 // DB connect
 try{
-    mongoose.connect(process.env.DB_CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    mongoose.connect('mongodb+srv://hasintha2:has1nthamongolab2@khkcluster0-gsoaq.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true }, () => {
         console.log('DB Connection OK!');
     });
 } catch (err) {
