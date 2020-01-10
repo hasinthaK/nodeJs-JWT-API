@@ -3,6 +3,7 @@ const app = express();
 
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const jwtverifier = require('./middlewares/jwtverifier');
 // const cors = require('cors');
 
 
@@ -23,10 +24,17 @@ app.use(express.json());
 
 //import Routes
 const authRoutes = require('./routes/auth');
-
+const privateRoutes = require('./routes/privateRoutes');
 
 //Route middlewares
 app.use('/user', authRoutes);
+app.use('/get', jwtverifier, privateRoutes);
+
+
+//Test Private routes
+// app.get('/', jwtverifier, (req, res) => {
+//     res.send('Private route');
+// });
 
 
 //Listen on port
