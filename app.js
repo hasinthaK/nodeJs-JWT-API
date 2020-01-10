@@ -9,9 +9,13 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // DB connect
-mongoose.connect(process.env.DB_CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
-    console.log('Connected to DB');
-});
+try{
+    mongoose.connect(process.env.DB_CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+        console.log('Connected to DB');
+    });
+} catch (err) {
+    console.error(err);
+}
 
 //import Routes
 const authRoutes = require('./routes/auth');
