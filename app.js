@@ -22,6 +22,7 @@ const authRoutes = require('./routes/auth');
 
 
 //Route middlewares
+app.use(express.json());
 app.use('/user', authRoutes);
 
 

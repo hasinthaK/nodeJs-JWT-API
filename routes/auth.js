@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const loginUser = require('../models/LoginUser');
+const registerUser = require('../models/RegisterUser');
 
 // Register
 router.post('/register', (req, res) => {
