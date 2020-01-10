@@ -44,7 +44,7 @@ router.post('/register', async (req, res) => {
         res.status(400).send(err);
     }
 });
-
+///////////////////////Register END//////////////////////////////////////////////
 //Login
 router.post('/login', (req, res) => {
     console.log('Login API');
@@ -57,5 +57,5 @@ router.post('/login', (req, res) => {
 
 
 });
-
+///////////////////////////Login END///////////////////////////////////////////////
 module.exports = router;
