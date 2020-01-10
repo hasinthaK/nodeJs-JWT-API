@@ -17,12 +17,15 @@ try{
     console.error(err);
 }
 
+//App middlewares
+app.use(express.json());
+
+
 //import Routes
 const authRoutes = require('./routes/auth');
 
 
 //Route middlewares
-app.use(express.json());
 app.use('/user', authRoutes);
 
 
