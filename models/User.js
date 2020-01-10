@@ -27,5 +27,5 @@ const UserSchema = new mongoose.Schema({
 });
 
 
-
+//DB collection name
 module.exports = mongoose.model('User', UserSchema);
