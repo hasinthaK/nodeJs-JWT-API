@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
 
     //If password is valid Login!
     //Generate JWT
-    const token = jwt.sign({_id: dbUser._id}, process.env.JWT_SECRET, {expiresIn: '7d', issuer: 'Patron'});
+    const token = jwt.sign({_id: dbUser._id}, process.env.JWTSECRET, {expiresIn: '7d', issuer: 'Patron'});
     res.header('auth-token', token).send({token: token});
     // res.send({message: 'Logged in!'});
 

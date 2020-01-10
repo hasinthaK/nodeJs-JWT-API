@@ -13,7 +13,7 @@ dotenv.config({path: `${__dirname}/.env`});
 
 // DB connect
 try{
-    mongoose.connect(process.env.DB_CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    mongoose.connect(process.env.DBCONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
         console.log('DB Connection OK!');
     });
 } catch (err) {
