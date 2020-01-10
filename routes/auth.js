@@ -1,10 +1,18 @@
 const router = require('express').Router();
 const loginUser = require('../models/LoginUser');
 const registerUser = require('../models/RegisterUser');
+const { registerValidator } = require('../validation');
 
 // Register
 router.post('/register', async (req, res) => {
     console.log('Register API');
+
+    //Validate req data
+    const {error} = registerValidator(req.body);
+    if(error) return res.status(400).send(error.details[0].message);
+
+
+    // res.send(validated);
 
     const newUser = new registerUser({
         name: req.body.name,
@@ -20,8 +28,6 @@ router.post('/register', async (req, res) => {
         console.error('DB save error');
         res.status(400).send(err);
     }
-
-    // res.send('Register API');
 });
 
 //Login
