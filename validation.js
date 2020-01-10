@@ -1,4 +1,4 @@
-const { Joi } = require('@hapi/joi');
+const Joi = require('joi');
 
 //RegisterValidator for registering new users
 const registerValidator = (body) => {
@@ -8,7 +8,7 @@ const registerValidator = (body) => {
         password: Joi.string().min(6).required()
     });
 
-    return schema.validate(body);
+    return Joi.validate(body, schema);
 }
 
 //LoginValidator for login
