@@ -4,9 +4,11 @@ const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const jwtverifier = require('./middlewares/jwtverifier');
-// const cors = require('cors');
+const cors = require('cors');
 
-
+//App middlewares
+app.use(express.json());
+app.use(cors());
 dotenv.config();
 
 // DB connect
@@ -17,10 +19,6 @@ try{
 } catch (err) {
     console.error(err);
 }
-
-//App middlewares
-app.use(express.json());
-
 
 //import Routes
 const authRoutes = require('./routes/auth');
