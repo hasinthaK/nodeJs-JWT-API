@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { registerValidator, loginValidator } = require('../validation');
 
+// get configured redis client
+const redisClient = require('../redis');
+
 // Register
 router.post('/register', async (req, res) => {
     // console.log('Register API');
@@ -80,8 +83,21 @@ router.post('/login', async (req, res) => {
 ///////////////////////////Login END///////////////////////////////////////////////
 // refresh Token
 router.post('/token', (req, res) => {
+    // if no token is presented
+    if (!req.body.refreshtoken) {
+        res.status(404).send({ message: 'No refresh token is presented!' });
+    }
     // get refreshToken from redis if available
-    redis.
-        if(req.body.refreshToken)
+    redisClient.get(req.body.refreshtoken, (err, reply) => {
+        if (err) return res.status(400).send({ message: `Internal error, ${err}` });
+        if (reply) {
+            // when redis has the refresh token - create new JWT & send to the user
+            console.log(`value got from Redis! ${reply}`);
+
+        } else {
+            // when redis has no token, it is an internal error
+            return res.status(400).send({ message: `Redis could not find the refresh token provided!` });
+        }
+    });
 });
 module.exports = router;
