@@ -93,6 +93,7 @@ router.post('/token', (req, res) => {
         if (reply) {
             // when redis has the refresh token - create new JWT & send to the user
             console.log(`value got from Redis! ${reply}`);
+            return res.status(200).send({ message: `Token found: ${reply}` });
 
         } else {
             // when redis has no token, it is an internal error
