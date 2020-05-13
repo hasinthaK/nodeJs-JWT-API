@@ -13,9 +13,12 @@ dotenv.config({ path: `${__dirname}/.env` });
 
 // DB connect 
 try {
-    mongoose.connect(process.env.DB_CONN_LOCAL, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
-        console.log('DB Connection OK!');
+    mongoose.connect('mongodb://127.0.0.1:27017/local', { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+        console.log(`DB Connection OK! - local`);
     });
+    // mongoose.connect(process.env.DB_CONN || 'mongodb://127.0.0.1:27017/local', { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    //     console.log(`DB Connection OK! - ${process.env.DB_CONN || 'local'}`);
+    // });
 } catch (err) {
     console.error(err);
 }
@@ -36,5 +39,4 @@ app.use('/get', jwtverifier, privateRoutes);
 
 
 //Listen on port
-const port = process.env.PORT;
-app.listen(port || 3000, () => console.log(`Listening on ${port} || 3000`));
+app.listen(process.env.PORT || 3000, () => console.log(`Listening on ${process.env.PORT || '3000'}`));

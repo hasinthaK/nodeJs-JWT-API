@@ -75,8 +75,18 @@ router.post('/login', async (req, res) => {
 
     //If password is valid Login!
     //Generate JWT
-    const token = jwt.sign({ _id: dbUser._id }, process.env.JWT_SECRET, { expiresIn: '7d', issuer: 'Patron' });
-    res.header('auth-token', token).send({ token: token });
+    const jwtPayload = {
+        _id: dbUser._id,
+        email: dbUser.email
+    }
+    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXP || 900, issuer: 'KHK' });
+    const refreshtoken = jwt.sign(jwtPayload, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXP || 86400, issuer: 'KHK' });
+
+    // set refreshToken in redis store
+    redisClient.set(refreshtoken, JSON.stringify(jwtPayload));
+    // set expiration if env var available
+    if (process.env.REDIS_EXP) redisClient.expire(refreshtoken, process.env.REDIS_EXP);
+    res.status(200).header('auth-token', token).send({ token, refreshtoken });
     // res.send({message: 'Logged in!'});
 
 });
@@ -87,17 +97,18 @@ router.post('/token', (req, res) => {
     if (!req.body.refreshtoken) {
         res.status(404).send({ message: 'No refresh token is presented!' });
     }
+
     // get refreshToken from redis if available
     redisClient.get(req.body.refreshtoken, (err, reply) => {
         if (err) return res.status(400).send({ message: `Internal error, ${err}` });
         if (reply) {
             // when redis has the refresh token - create new JWT & send to the user
             console.log(`value got from Redis! ${reply}`);
-            return res.status(200).send({ message: `Token found: ${reply}` });
-
+            const token = jwt.sign(JSON.parse(reply), process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXP || 900, issuer: 'KHK' });
+            res.status(200).header('auth-token', token).send({ token });
         } else {
             // when redis has no token, it is an internal error
-            return res.status(400).send({ message: `Redis could not find the refresh token provided!` });
+            return res.status(400).send({ message: `Redis could not find the refresh token provided!, Please Login as usual.` });
         }
     });
 });
