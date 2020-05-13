@@ -9,11 +9,11 @@ const cors = require('cors');
 //App middlewares
 app.use(express.json());
 app.use(cors());
-dotenv.config({path: `${__dirname}/.env`});
+dotenv.config({ path: `${__dirname}/.env` });
 
-// DB connect
-try{
-    mongoose.connect(process.env.DB_CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+// DB connect 
+try {
+    mongoose.connect(process.env.DB_CONN_LOCAL, { useNewUrlParser: true, useUnifiedTopology: true }, () => {
         console.log('DB Connection OK!');
     });
 } catch (err) {

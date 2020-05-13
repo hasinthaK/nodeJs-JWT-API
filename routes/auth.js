@@ -11,17 +11,17 @@ router.post('/register', async (req, res) => {
     //Validate req data
     //Extract error object from the validation object
     //null if valid
-    const {error} = registerValidator(req.body);
-    if(error) {
+    const { error } = registerValidator(req.body);
+    if (error) {
         console.log(error.details[0].message);
-        return res.status(400).send({message: error.details[0].message});
+        return res.status(400).send({ message: error.details[0].message });
     };
 
     //Check if the email already exists
-    const dbUser = await User.findOne({email: req.body.email});
-    if(dbUser) {
+    const dbUser = await User.findOne({ email: req.body.email });
+    if (dbUser) {
         console.error('Email is already in use!');
-        return res.status(400).send({message: 'Email is already in use!'});
+        return res.status(400).send({ message: 'Email is already in use!' });
     }
 
     //Password hashing
@@ -35,11 +35,11 @@ router.post('/register', async (req, res) => {
         password: hashed
     });
 
-    try{
+    try {
         const savedUser = await newUser.save();
         console.log(`New user created: ${newUser.email}`);
-        res.send({user_id: savedUser._id});
-    }catch (err) {
+        res.send({ user_id: savedUser._id });
+    } catch (err) {
         console.error('DB save error');
         res.status(400).send(err);
     }
@@ -50,32 +50,38 @@ router.post('/login', async (req, res) => {
     // console.log('Login API');
 
     // Validate data before login
-    const {error} = loginValidator(req.body);
-    if(error) {
+    const { error } = loginValidator(req.body);
+    if (error) {
         console.log(error.details[0].message);
-        return res.status(400).send({message: error.details[0].message});
+        return res.status(400).send({ message: error.details[0].message });
     };
 
     // Check if user is in the DB
-    const dbUser = await User.findOne({email: req.body.email});
-    if(!dbUser) {
+    const dbUser = await User.findOne({ email: req.body.email });
+    if (!dbUser) {
         console.error('Email not found!');
-        return res.status(400).send({message: 'Email not found!'});
+        return res.status(400).send({ message: 'Email not found!' });
     }
 
     // Check pass
     const validPass = await bcrypt.compare(req.body.password, dbUser.password);
-    if(!validPass) {
+    if (!validPass) {
         console.error('Password is incorrect!');
-       return res.status(400).send({message: 'Password is incorrect!'});
+        return res.status(400).send({ message: 'Password is incorrect!' });
     }
 
     //If password is valid Login!
     //Generate JWT
-    const token = jwt.sign({_id: dbUser._id}, process.env.JWT_SECRET, {expiresIn: '7d', issuer: 'Patron'});
-    res.header('auth-token', token).send({token: token});
+    const token = jwt.sign({ _id: dbUser._id }, process.env.JWT_SECRET, { expiresIn: '7d', issuer: 'Patron' });
+    res.header('auth-token', token).send({ token: token });
     // res.send({message: 'Logged in!'});
 
 });
 ///////////////////////////Login END///////////////////////////////////////////////
+// refresh Token
+router.post('/token', (req, res) => {
+    // get refreshToken from redis if available
+    redis.
+        if(req.body.refreshToken)
+});
 module.exports = router;
